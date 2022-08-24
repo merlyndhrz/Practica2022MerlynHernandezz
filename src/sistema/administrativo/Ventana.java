@@ -20,13 +20,13 @@ import javax.swing.table.DefaultTableModel;
 public class Ventana extends JFrame {
 
     Usuario UsuSistema[] = new Usuario[10];
-    JPanel panelInicioSesion = new JPanel();
-    JPanel panelControl = new JPanel();
-    JPanel panelCrearUsuario = new JPanel();
+    JPanel panelInicioSesion;
+    JPanel panelControl;
+    JPanel panelCrearUsuario;
     int control = 2;
     Cliente Clientes[] = new Cliente[100];
     int controlCliente = 0;
-    JPanel panelcontrolClientes = new JPanel();
+    JPanel panelcontrolClientes;
     int controlClientes = 2; 
 
     public Ventana() {
@@ -62,6 +62,7 @@ public class Ventana extends JFrame {
     }
 
     public void objetos() {
+        panelInicioSesion = new JPanel(); 
         this.getContentPane().add(panelInicioSesion);
         panelInicioSesion.setLayout(null);
 
@@ -138,6 +139,7 @@ public class Ventana extends JFrame {
     }
 
     public void panelControl() {
+        panelControl = new JPanel(); 
         this.getContentPane().add(panelControl);
         panelControl.setLayout(null);
         this.setSize(600, 500);
@@ -166,6 +168,7 @@ public class Ventana extends JFrame {
     }
 
     public void CrearUsuario() {
+        panelCrearUsuario = new JPanel(); 
         this.getContentPane().add(panelCrearUsuario);
         panelCrearUsuario.setLayout(null);
         this.setSize(500, 450);
@@ -273,6 +276,7 @@ public class Ventana extends JFrame {
     }
 
     public void panelControlCli() {
+        panelcontrolClientes = new JPanel(); 
         this.getContentPane().add(panelcontrolClientes);
         panelcontrolClientes.setLayout(null);
         this.setSize(750, 500);
@@ -294,7 +298,7 @@ public class Ventana extends JFrame {
 
         JTable tablaClientes = new JTable(datosTabla);
         JScrollPane barraTablaClientes = new JScrollPane(tablaClientes);
-        barraTablaClientes.setBounds(10, 10, 300, 300);
+        barraTablaClientes.setBounds(10, 10, 300, 100);
         panelcontrolClientes.add(barraTablaClientes);
 
         JButton btnCargarArchivo = new JButton("Buscar archivo CSV");
@@ -309,6 +313,8 @@ public class Ventana extends JFrame {
                 archivoSeleccionado = ventanaSeleccion.getSelectedFile();
                 System.out.println("La ubicacion del archivo es " + archivoSeleccionado.getPath());
                 leerArchivoCSV(archivoSeleccionado.getPath());
+                panelcontrolClientes.setVisible(false);
+                panelControlCli();
 
             }
         };
