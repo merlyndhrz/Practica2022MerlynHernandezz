@@ -365,11 +365,34 @@ public class Ventana extends JFrame {
     }
     public void crearReporte(){
         try{
-        PrintWriter escribir = new PrintWriter("Reportes/proyecto.txt","UTF-8");
-        escribir.println("Centro educativo Siloe");
-        escribir.println("Merlyn Hernandez");
-        escribir.println("5to BACO");
-        escribir.println("Practicas");
+        PrintWriter escribir = new PrintWriter("Reportes/reporte.html","UTF-8");
+        escribir.println("<!doctype html>");
+        escribir.println("<html>");
+        escribir.println("<head>");
+        escribir.println("<title>Reporte del sistema</title>");
+        escribir.println("</head>");
+        escribir.println("<body>");
+        escribir.println("<h1>Listado de clientes en el sistema</h1>");
+        escribir.println("<br>");
+        
+         escribir.print("<table border = 1>");
+                escribir.print("<tr>");
+                escribir.print("<td>NIT</td> <td>Nombre</td> <td>Edad</td> <td>Genero</td>");
+                escribir.print("</tr>");
+                
+                for(int i = 0; i<99; i++){
+            if(Clientes[i] != null){
+                escribir.print("<tr>");
+                escribir.println("<td>" + Clientes[i].NIT + "</td><td> " + Clientes[i].Nombre + "</td><td>" + Clientes[i].Edad + "</td><td>" + Clientes[i].Genero + "</td>");
+                escribir.print("</tr>");
+            }
+        }
+               
+                escribir.print("</table>");
+       
+        escribir.println("</body>");
+        escribir.println("</html>");
+        
         escribir.close();
         JOptionPane.showMessageDialog(null, "Reporte creado con extito, este se encuentra en la carpeta Reportes.");
         }catch(IOException error){
