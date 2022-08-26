@@ -6,6 +6,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -16,6 +17,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel; 
+import org.jfree.chart.JFreeChart; 
+import org.jfree.data.general.DefaultPieDataset; 
+import org.jfree.chart.plot.PlotOrientation; 
+import org.jfree.data.category.DefaultCategoryDataset;
 
 public class Ventana extends JFrame {
 
@@ -279,7 +286,7 @@ public class Ventana extends JFrame {
         panelcontrolClientes = new JPanel(); 
         this.getContentPane().add(panelcontrolClientes);
         panelcontrolClientes.setLayout(null);
-        this.setSize(750, 500);
+        this.setSize(850, 500);
         this.setTitle("Administracion de clientes");
         panelControl.setVisible(false);
 
@@ -300,6 +307,30 @@ public class Ventana extends JFrame {
         JScrollPane barraTablaClientes = new JScrollPane(tablaClientes);
         barraTablaClientes.setBounds(10, 10, 300, 100);
         panelcontrolClientes.add(barraTablaClientes);
+        
+        DefaultPieDataset datos = new DefaultPieDataset(); 
+        datos.setValue("Masculino", totalHombres());
+        datos.setValue("Femenino", totalMujeres());
+        
+        JFreeChart graficoCircular = ChartFactory.createPieChart("Generos en el sistema", datos); 
+        ChartPanel panelCircular = new ChartPanel(graficoCircular);
+        panelCircular.setBounds(10, 120, 300, 300); 
+        panelcontrolClientes.add(panelCircular); 
+        
+//        rango 1 -> 18 - 30
+//        rango 2 -> 31 - 45 
+//        rango 3 -> mayor a 45
+          DefaultCategoryDataset datos2 = new DefaultCategoryDataset(); 
+          datos2.addValue(rango18a30(), "18-30", "Edad"); 
+          datos2.addValue(rango31a45(), "31-45", "Edad"); 
+          datos2.addValue(rango45mas(), "Mayor a 45", "Edad"); 
+          JFreeChart graficoColumnas = ChartFactory.createBarChart("Rango de edades", "Edad", "Escala", datos2, PlotOrientation.VERTICAL, true, true, false); 
+          ChartPanel PanelColumnas = new ChartPanel(graficoColumnas); 
+          PanelColumnas.setBounds(450, 120, 300, 300); 
+          panelcontrolClientes.add(PanelColumnas); 
+          
+    
+          
 
         JButton btnCargarArchivo = new JButton("Buscar archivo CSV");
         btnCargarArchivo.setBounds(350, 10, 200, 25);
@@ -319,6 +350,91 @@ public class Ventana extends JFrame {
             }
         };
         btnCargarArchivo.addActionListener(buscarArchivo);
+        
+        JButton btnReporte = new JButton("Crear reprote HTML"); 
+        btnReporte.setBounds(650, 10, 150, 25); 
+        panelcontrolClientes.add(btnReporte);
+        ActionListener crearHTML = new ActionListener() { 
+            @Override
+            public void actionPerformed(ActionEvent e) { 
+                crearReporte();
+            }              
+            };
+            btnReporte.addActionListener(crearHTML);
+            
+    }
+    public void crearReporte(){
+        try{
+        PrintWriter escribir = new PrintWriter("Reportes/proyecto.txt","UTF-8");
+        escribir.println("Centro educativo Siloe");
+        escribir.println("Merlyn Hernandez");
+        escribir.println("5to BACO");
+        escribir.println("Practicas");
+        escribir.close();
+        JOptionPane.showMessageDialog(null, "Reporte creado con extito, este se encuentra en la carpeta Reportes.");
+        }catch(IOException error){
+            JOptionPane.showMessageDialog(null, "No se puede crear el reporte");
+        }
+    }
+            
+    public int totalHombres(){
+        int total = 0; 
+        for(int i = 0;i<100; i++){
+           if(Clientes[i] !=null){
+            if(Clientes[i].Genero == 'M'){
+                total++; 
+            }
+        }
+        }
+    return total;
+    }
+    
+    public int totalMujeres(){
+        int total = 0; 
+        for(int i = 0;i<100; i++){
+           if(Clientes[i] !=null){
+            if(Clientes[i].Genero == 'F'){
+                total++; 
+            }
+        }
+        }
+    return total;
+    }
+    
+    public int rango18a30(){
+        int total = 0; 
+        for(int i = 0;i<100; i++){
+           if(Clientes[i] !=null){
+            if(Clientes[i].Edad >=18 && Clientes[i].Edad<=30){
+                total++; 
+            }
+        }
+        }
+    return total;
+    }
+    
+    public int rango31a45(){
+        int total = 0; 
+        for(int i = 0;i<100; i++){
+           if(Clientes[i] !=null){
+            if(Clientes[i].Edad >=31 && Clientes[i].Edad<=45){
+                total++; 
+            }
+        }
+        }
+    return total;
+    }
+    
+    public int rango45mas(){
+        int total = 0; 
+        for(int i = 0;i<100; i++){
+           if(Clientes[i] !=null){
+            if(Clientes[i].Edad >45){
+                total++; 
+            }
+        }
+        }
+    return total;
     }
 
     public void leerArchivoCSV(String ruta) {
