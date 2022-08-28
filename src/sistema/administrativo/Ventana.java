@@ -365,11 +365,23 @@ public class Ventana extends JFrame {
     }
     public void crearReporte(){
         try{
+          PrintWriter escribirCSS = new PrintWriter("Reportes/estilo.css","UTF-8"); 
+          escribirCSS.println("html { font-size: 20 px; font-family: 'Open Snaz', sans-serif; }");
+          escribirCSS.println("h1 { font-size: 60px; text-align: center; }");
+          escribirCSS.println("p, li { font-size:16px; line-height: 2; letter-spacing: 1px; }");
+          escribirCSS.println("table { table-layout: fixed; width:250px;} td{border: 1px solid black; width: 190px; word-wrap: break-word}");    
+          escribirCSS.println("html { background-color: #00539F; }"); 
+          escribirCSS.println("body { width: 970px; margin: 0 auto; background-color: #FF9500; padding: 0 20 px 20 px 20 px; border: 5px solid black}"); 
+          escribirCSS.println("h1 { margin: 0; padding: 20px 0; color: #00539F; text-shadow: 3px 3px 1px black; }");    
+          escribirCSS.close();
+            
+            
         PrintWriter escribir = new PrintWriter("Reportes/reporte.html","UTF-8");
         escribir.println("<!doctype html>");
         escribir.println("<html>");
         escribir.println("<head>");
         escribir.println("<title>Reporte del sistema</title>");
+        escribir.println("<link rel=\"stylesheet\" href=\"estilo.css\">");
         escribir.println("</head>");
         escribir.println("<body>");
         escribir.println("<h1>Listado de clientes en el sistema</h1>");
