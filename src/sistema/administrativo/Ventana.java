@@ -35,11 +35,16 @@ public class Ventana extends JFrame {
     int controlCliente = 0;
     JPanel panelcontrolClientes;
     int controlClientes = 2; 
+    Producto Productos[] = new Producto[100]; 
+    int controlProductos = 0; 
+    JPanel panelcontrolProductos; 
+    
 
     public Ventana() {
         objetos();
         crearAdmin();
         crearClientes();
+        crearProductos();
     }
 
     public void crearAdmin() {
@@ -67,6 +72,18 @@ public class Ventana extends JFrame {
         Clientes[1].Genero = 'F';
         Clientes[1].NIT = 300;
     }
+    public void crearProductos() {
+        Productos[0] = new Producto();
+        Productos[0].Nombre = "Producto 1";
+        Productos[0].Precio = 22;
+        Productos[0].Cantidad = 10;
+
+        Productos[0] = new Producto();
+        Productos[0].Nombre = "Producto 2";
+        Productos[0].Precio = 50;
+        Productos[0].Cantidad = 20;
+    }
+
 
     public void objetos() {
         panelInicioSesion = new JPanel(); 
@@ -168,11 +185,17 @@ public class Ventana extends JFrame {
         JButton btnAdminProductos = new JButton("Administración de productos");
         btnAdminProductos.setBounds(150, 80, 250, 25);
         panelControl.add(btnAdminProductos);
-
-        JButton btnAdminReportes = new JButton("Reportes");
-        btnAdminReportes.setBounds(150, 150, 250, 25);
-        panelControl.add(btnAdminReportes);
-    }
+        ActionListener administrarProductos = new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+               panelControlPro();
+               panelcontrolProductos.setVisible(true);
+            }
+        
+    };
+        btnAdminProductos.addActionListener(administrarProductos);
+                }
+    
 
     public void CrearUsuario() {
         panelCrearUsuario = new JPanel(); 
@@ -362,9 +385,40 @@ public class Ventana extends JFrame {
             };
             btnReporte.addActionListener(crearHTML);
             
+        JButton btnVolver = new JButton("Volver al menu");
+        btnVolver.setBounds(500, 50, 200, 25);
+        panelcontrolClientes.add(btnVolver);
+        ActionListener volverInicio = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                panelControl.setVisible(true);
+                panelcontrolClientes.setVisible(false);
+                VolverInicio();
+            }
+
+        };
+        btnVolver.addActionListener(volverInicio);
     }
+        
+        public void ordenar(){
+            Cliente auxiliar; 
+            for(int i=0; i<99; i++){
+                for(int j = 0; j<99; j++){
+                    if(Clientes[j+1] == null){
+                        break; 
+                    }else{
+                        if(Clientes[j].Edad> Clientes[j+1].Edad){
+                            auxiliar = Clientes[j+1];
+                            Clientes[j+1] = Clientes[j]; 
+                            Clientes[j] = auxiliar;                            
+                        }
+                    }
+                }
+            } 
+        }
     public void crearReporte(){
         try{
+          ordenar();
           PrintWriter escribirCSS = new PrintWriter("Reportes/estilo.css","UTF-8"); 
           escribirCSS.println("html { font-size: 20 px; font-family: 'Open Snaz', sans-serif; }");
           escribirCSS.println("h1 { font-size: 60px; text-align: center; }");
@@ -507,4 +561,31 @@ public class Ventana extends JFrame {
             JOptionPane.showMessageDialog(null, "No puedo abrir el archivo CSV");
         }
     }
+    public void panelControlPro() {
+        panelcontrolProductos = new JPanel(); 
+        this.getContentPane().add(panelcontrolProductos);
+        panelcontrolProductos.setLayout(null);
+        this.setSize(850, 500);
+        this.setTitle("Administracion de productos");
+        panelControl.setVisible(false);
+        
+        DefaultTableModel datosTabla = new DefaultTableModel();
+        datosTabla.addColumn("Nombre");
+        datosTabla.addColumn("Precio");
+        datosTabla.addColumn("Cantidad");
+        String fila [] = {"Lavadora", "100", "5"};
+        datosTabla.addRow(fila);
+        String fila2 [] = {"Estufa", "500", "2"};
+        datosTabla.addRow(fila2);
+        
+        JTable tablaProductos = new JTable(datosTabla);
+        JScrollPane barraTablaProductos = new JScrollPane(tablaProductos);
+        barraTablaProductos.setBounds(10, 10, 300, 300);
+        panelcontrolProductos.add(barraTablaProductos);
+
+     
+        }
+
+
 }
+
