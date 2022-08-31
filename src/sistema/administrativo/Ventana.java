@@ -35,9 +35,11 @@ public class Ventana extends JFrame {
     int controlCliente = 0;
     JPanel panelcontrolClientes;
     int controlClientes = 2; 
+    
     Producto Productos[] = new Producto[100]; 
-    int controlProductos = 0; 
+    int controlProducto = 0; 
     JPanel panelcontrolProductos; 
+    int controlProductos = 2; 
     
 
     public Ventana() {
@@ -75,13 +77,13 @@ public class Ventana extends JFrame {
     public void crearProductos() {
         Productos[0] = new Producto();
         Productos[0].Nombre = "Producto 1";
-        Productos[0].Precio = 22;
+        Productos[0].Precio = 75;
         Productos[0].Cantidad = 10;
 
-        Productos[0] = new Producto();
-        Productos[0].Nombre = "Producto 2";
-        Productos[0].Precio = 50;
-        Productos[0].Cantidad = 20;
+        Productos[1] = new Producto();
+        Productos[1].Nombre = "Producto 2";
+        Productos[1].Precio = 50;
+        Productos[1].Cantidad = 20;
     }
 
 
@@ -365,11 +367,14 @@ public class Ventana extends JFrame {
                 JFileChooser ventanaSeleccion = new JFileChooser();
                 ventanaSeleccion.showOpenDialog(null);
                 archivoSeleccionado = ventanaSeleccion.getSelectedFile();
-                System.out.println("La ubicacion del archivo es " + archivoSeleccionado.getPath());
+                //System.out.println("La ubicacion del archivo es " + archivoSeleccionado.getPath());
+                if(archivoSeleccionado == null){
+                   JOptionPane.showMessageDialog(null, "No se ah podido cargar archivo CSV");
+            }else{ 
                 leerArchivoCSV(archivoSeleccionado.getPath());
                 panelcontrolClientes.setVisible(false);
                 panelControlCli();
-
+        }
             }
         };
         btnCargarArchivo.addActionListener(buscarArchivo);
@@ -380,7 +385,7 @@ public class Ventana extends JFrame {
         ActionListener crearHTML = new ActionListener() { 
             @Override
             public void actionPerformed(ActionEvent e) { 
-                crearReporte();
+                crearReporteCli();
             }              
             };
             btnReporte.addActionListener(crearHTML);
@@ -400,7 +405,7 @@ public class Ventana extends JFrame {
         btnVolver.addActionListener(volverInicio);
     }
         
-        public void ordenar(){
+        public void ordenarcli(){
             Cliente auxiliar; 
             for(int i=0; i<99; i++){
                 for(int j = 0; j<99; j++){
@@ -416,10 +421,10 @@ public class Ventana extends JFrame {
                 }
             } 
         }
-    public void crearReporte(){
+    public void crearReporteCli(){
         try{
-          ordenar();
-          PrintWriter escribirCSS = new PrintWriter("Reportes/estilo.css","UTF-8"); 
+          ordenarcli();
+          PrintWriter escribirCSS = new PrintWriter("ReportesCli/estilo.css","UTF-8"); 
           escribirCSS.println("html { font-size: 20 px; font-family: 'Open Snaz', sans-serif; }");
           escribirCSS.println("h1 { font-size: 60px; text-align: center; }");
           escribirCSS.println("p, li { font-size:16px; line-height: 2; letter-spacing: 1px; }");
@@ -430,7 +435,7 @@ public class Ventana extends JFrame {
           escribirCSS.close();
             
             
-        PrintWriter escribir = new PrintWriter("Reportes/reporte.html","UTF-8");
+        PrintWriter escribir = new PrintWriter("ReportesCli/reporteCli.html","UTF-8");
         escribir.println("<!doctype html>");
         escribir.println("<html>");
         escribir.println("<head>");
@@ -460,7 +465,7 @@ public class Ventana extends JFrame {
         escribir.println("</html>");
         
         escribir.close();
-        JOptionPane.showMessageDialog(null, "Reporte creado con extito, este se encuentra en la carpeta Reportes.");
+        JOptionPane.showMessageDialog(null, "Reporte creado con extito, este se encuentra en la carpeta ReportesCli.");
         }catch(IOException error){
             JOptionPane.showMessageDialog(null, "No se puede crear el reporte");
         }
@@ -573,19 +578,222 @@ public class Ventana extends JFrame {
         datosTabla.addColumn("Nombre");
         datosTabla.addColumn("Precio");
         datosTabla.addColumn("Cantidad");
-        String fila [] = {"Lavadora", "100", "5"};
-        datosTabla.addRow(fila);
-        String fila2 [] = {"Estufa", "500", "2"};
-        datosTabla.addRow(fila2);
+        
+         for (int i = 0; i < 100; i++) {
+            if (Productos[i] != null) {
+                String fila [] = {Productos[i].Nombre, String.valueOf(Productos[i].Precio),String.valueOf(Productos[i].Cantidad)};
+                datosTabla.addRow(fila);
+            }
+        } 
         
         JTable tablaProductos = new JTable(datosTabla);
         JScrollPane barraTablaProductos = new JScrollPane(tablaProductos);
-        barraTablaProductos.setBounds(10, 10, 300, 300);
+        barraTablaProductos.setBounds(10, 10, 300, 100);
         panelcontrolProductos.add(barraTablaProductos);
+        
+//        rango 1 -> 50 - 100
+//        rango 2 -> 101 - 500
+//        rango 3 -> mayor a 500
+          DefaultCategoryDataset datos2 = new DefaultCategoryDataset(); 
+          datos2.addValue(rango50a100(), "50-100", "Precio"); 
+          datos2.addValue(rango101a500(), "101-500", "Precio"); 
+          datos2.addValue(rango500mas(), "Mayor a 500", "Precio"); 
+          JFreeChart graficoColumnas = ChartFactory.createBarChart("Rango de precios", "Precio", "Escala", datos2, PlotOrientation.VERTICAL, true, true, false); 
+          ChartPanel PanelColumnas = new ChartPanel(graficoColumnas); 
+          PanelColumnas.setBounds(450, 120, 300, 300); 
+          panelcontrolProductos.add(PanelColumnas); 
+          
 
-     
+        
+        JButton btnCargarArchivo = new JButton("Buscar archivo CSV");
+        btnCargarArchivo.setBounds(350, 10, 200, 25);
+        panelcontrolProductos.add(btnCargarArchivo);
+        ActionListener buscarArchivo = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                 File archivoSeleccionado;
+                JFileChooser ventanaSeleccion = new JFileChooser();
+                ventanaSeleccion.showOpenDialog(null);
+                archivoSeleccionado = ventanaSeleccion.getSelectedFile();
+               //System.out.println("La ubicacion del archivo es " + archivoSeleccionado.getPath());
+               if(archivoSeleccionado == null){
+                  JOptionPane.showMessageDialog(null, "No se ah podido cargar archivo CSV");
+            }else{ 
+                leerArchivoCSVPro(archivoSeleccionado.getPath());
+                panelcontrolProductos.setVisible(false);
+                panelControlPro();           
+            }
+            }
+            
+        };
+        btnCargarArchivo.addActionListener(buscarArchivo);      
+        
+         JButton btnReporte = new JButton("Crear reprote HTML"); 
+        btnReporte.setBounds(650, 10, 150, 25); 
+        panelcontrolProductos.add(btnReporte);
+        ActionListener crearHTML = new ActionListener() { 
+            @Override
+            public void actionPerformed(ActionEvent e) { 
+                crearReportePro();
+            }              
+            };
+            btnReporte.addActionListener(crearHTML);
+            
+        JButton btnVolver = new JButton("Volver al menu");
+        btnVolver.setBounds(500, 50, 200, 25);
+        panelcontrolProductos.add(btnVolver);
+        ActionListener volverInicio = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent ae) {
+                panelControl.setVisible(true);
+                panelcontrolProductos.setVisible(false);
+                VolverInicio();
+            }
+
+        };
+        btnVolver.addActionListener(volverInicio);
+    }
+     public void ordenarPro(){
+            Producto auxiliar; 
+            for(int i=0; i<99; i++){
+                for(int j = 0; j<99; j++){
+                    if(Productos[j+1] == null){
+                        break; 
+                    }else{
+                        if(Productos[j].Precio> Productos[j+1].Precio){
+                            auxiliar = Productos[j+1];
+                            Productos[j+1] = Productos[j]; 
+                            Productos[j] = auxiliar;                            
+                        }
+                    }
+                }
+            } 
         }
 
+    public void crearReportePro(){
+        try{
+          ordenarPro();
+          PrintWriter escribirCSS = new PrintWriter("ReportesPro/estilo.css","UTF-8"); 
+          escribirCSS.println("html { font-size: 20 px; font-family: 'Open Snaz', sans-serif; }");
+          escribirCSS.println("h1 { font-size: 60px; text-align: center; }");
+          escribirCSS.println("p, li { font-size:16px; line-height: 2; letter-spacing: 1px; }");
+          escribirCSS.println("table { table-layout: fixed; width:250px;} td{border: 1px solid black; width: 190px; word-wrap: break-word}");    
+          escribirCSS.println("html { background-color: #00539F; }"); 
+          escribirCSS.println("body { width: 970px; margin: 0 auto; background-color: #FF9500; padding: 0 20 px 20 px 20 px; border: 5px solid black}"); 
+          escribirCSS.println("h1 { margin: 0; padding: 20px 0; color: #00539F; text-shadow: 3px 3px 1px black; }");    
+          escribirCSS.close();
+            
+            
+        PrintWriter escribir = new PrintWriter("ReportesPro/reporte.html","UTF-8");
+        escribir.println("<!doctype html>");
+        escribir.println("<html>");
+        escribir.println("<head>");
+        escribir.println("<title>Reporte del sistema</title>");
+        escribir.println("<link rel=\"stylesheet\" href=\"estilo.css\">");
+        escribir.println("</head>");
+        escribir.println("<body>");
+        escribir.println("<h1>Listado de productos en el sistema</h1>");
+        escribir.println("<br>");
+        
+         escribir.print("<table border = 1>");
+                escribir.print("<tr>");
+                escribir.print("<td>Cantidad</td> <td>Nombre</td> <td>Precio</td>");
+                escribir.print("</tr>");
+                
+                for(int i = 0; i<99; i++){
+            if(Productos[i] != null){
+                escribir.print("<tr>");
+                escribir.println("<td>" + Productos[i].Cantidad + "</td><td> " + Productos[i].Nombre + "</td><td>" + Productos[i].Precio + "</td>");
+                escribir.print("</tr>");
+            }
+        }
+               
+                escribir.print("</table>");
+       
+        escribir.println("</body>");
+        escribir.println("</html>");
+        
+        escribir.close();
+        JOptionPane.showMessageDialog(null, "Reporte creado con extito, este se encuentra en la carpeta ReportesPro.");
+        }catch(IOException error){
+            JOptionPane.showMessageDialog(null, "No se puede crear el reporte");
+        }    
+        
+    }
+    public int rango50a100(){
+        int total = 0; 
+        for(int i = 0;i<100; i++){
+           if(Productos[i] !=null){
+            if(Productos[i].Precio >=50 && Productos[i].Precio<=100){
+                total++; 
+            }
+        }
+        }
+    return total;
+    }
+    
+    public int rango101a500(){
+        int total = 0; 
+        for(int i = 0;i<100; i++){
+           if(Productos[i] !=null){
+            if(Productos[i].Precio >=101 && Productos[i].Precio<=500){
+                total++; 
+            }
+        }
+        }
+    return total;
+    }
+    
+    public int rango500mas(){
+        int total = 0; 
+        for(int i = 0;i<100; i++){
+           if(Productos[i] !=null){
+            if(Productos[i].Precio >500){
+                total++; 
+            }
+        }
+        }
+    return total;
+    }
+              
+    
+    public void leerArchivoCSVPro(String ruta){
+        try {
+            BufferedReader archivoTemporal = new BufferedReader(new FileReader(ruta));
+            String lineaLeida = "";
+            while (lineaLeida != null) {
+                lineaLeida = archivoTemporal.readLine();
+                if (lineaLeida != null) {
+                    String datoSeparados[] = lineaLeida.split(",");
+ 
+                    int posicion = 0;
+                    if (controlProductos < 100) {
+                        for (int i = 0; i < 99; i++) {
+                            if (Productos[i] == null) {
+                                posicion = i;
+                                break;
+                            }
+                        }                   
+                        Productos[posicion] = new Producto();
+                        Productos[posicion].Nombre = datoSeparados[0];
+                        Productos[posicion].Precio = Float.parseFloat(datoSeparados[1]);
+                        Productos[posicion].Cantidad = Integer.parseInt(datoSeparados[2]);                     
+                        controlProductos++;                        
+                    } else {
+                        JOptionPane.showMessageDialog(null, "No puede registar mas productos");
+                    }
 
+                }
+            }
+            JOptionPane.showMessageDialog(null, "Productos registrados exitosamente, total de productos " + controlProductos);
+            archivoTemporal.close();
+        } catch (IOException error) {
+            JOptionPane.showMessageDialog(null, "No puedo abrir el archivo CSV");
+        }
+    }
 }
+
+
+
+
 
